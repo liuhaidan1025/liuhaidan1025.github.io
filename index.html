@@ -1,1 +1,203 @@
-<h1>hahahaha</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>gouwuche</title>
+    <style>
+      .cart {
+        margin: 0 auto;
+        width: 1000px;
+      }
+      .goods {
+        padding: 10px 10px;
+        border: 1px solid rgb(44, 39, 39);
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .name,
+      .price,
+      .mesage,
+      .total {
+        width: 120px;
+      }
+      input {
+        width: 50px;
+      }
+      .user-disable {
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cart">
+      <input type="checkbox" class="all" id="all" checked /><label
+        for="all"
+        class="user-disable"
+        >全选<br /></label
+      >总价：<span class="sum">0.00</span>
+    </div>
+    <script>
+      var list = [
+        {
+          id: 01,
+          name: "鞋",
+          src: "n6.jpg",
+          mesage: "来u根据哦阿姐法国v哦i额看电视剧撒",
+          price: 200.5,
+          num: 1
+        },
+        {
+          id: 02,
+          name: "装饰品",
+          src: "n7.jpg",
+          mesage: "阿斯蒂芬hi撒低级佛i阿达v教师的国家的",
+          price: 100.1,
+          num: 1
+        },
+        {
+          id: 02,
+          name: "装饰品",
+          src: "n7.jpg",
+          mesage: "阿斯蒂芬hi撒低级佛i阿达v教师的国家的",
+          price: 100.1,
+          num: 1
+        }
+      ];
+      list.forEach(function(item) {
+        var goods = document.createElement("div");
+        goods.className = "goods";
+        goods.innerHTML =
+          "<input type='checkbox' class='radio' checked><img src=" +
+          item.src +
+          " alt=''><span class='name'>" +
+          item.name +
+          "</span><span class='mesage'>" +
+          item.mesage +
+          "</span><span class='price'>" +
+          item.price +
+          "</span><div><button class='cut'>-</button><input class='num' type='text' value='1'><button class='add'>+</button></div><span class='total'>" +
+          (item.price * item.num).toFixed(2) +
+          "</span><button class='del'>删除</button>";
+        document.querySelector(".cart").appendChild(goods);
+      });
+      // document.querySelectorAll(".add")[0].onclick = function() {
+      //   //获取当前value   加1   赋值
+      //   console.log(1111);
+      //   var num = this.parentNode.parentNode.querySelector(".num").value;
+      //   num++;
+      //   this.parentNode.parentNode.querySelector(".num").value = num;
+      // };
+      document.querySelector(".sum").innerHTML = getTotal(
+        document.querySelectorAll(".goods")
+      );
+      document.querySelector(".cart").onclick = function(event) {
+        var ele = event.target;
+        if (ele.className === "add") {
+          var num = ele.parentNode.parentNode.querySelector(".num").value;
+          num++;
+          var price = ele.parentNode.parentNode.querySelector(".price")
+            .innerHTML;
+          ele.parentNode.parentNode.querySelector(".total").innerHTML = (
+            price * num
+          ).toFixed(2);
+          ele.parentNode.parentNode.querySelector(".num").value = num;
+          // ele.parentNode.parentNode.querySelector(".radio").checked = true;
+          document.querySelector(".sum").innerHTML = getTotal(
+            document.querySelectorAll(".goods")
+          );
+        } else if (ele.className === "cut") {
+          var num1 = ele.parentNode.parentNode.querySelector(".num").value;
+          var price = ele.parentNode.parentNode.querySelector(".price")
+            .innerHTML;
+          if (num1 > 1) {
+            num1--;
+          }
+          ele.parentNode.parentNode.querySelector(".total").innerHTML = (
+            price * num1
+          ).toFixed(2);
+          ele.parentNode.parentNode.querySelector(".num").value = num1;
+          // ele.parentNode.parentNode.querySelector(".radio").checked = true;
+          document.querySelector(".sum").innerHTML = getTotal(
+            document.querySelectorAll(".goods")
+          );
+        }
+        // else if (ele.className === "del") {
+        //   document.querySelector(".cart").removeChild(ele.parentNode);
+        // }
+        var inputArr = document.querySelectorAll(".num");
+        //先找到所有的 input ，然后遍历 计算 赋值
+        for (var n = 0; n < inputArr.length; n++) {
+          inputArr[n].onblur = function() {
+            var price = this.parentNode.parentNode.querySelector(".price")
+              .innerHTML;
+            var num = this.value;
+            this.parentNode.parentNode.querySelector(".total").innerHTML = (
+              price * num
+            ).toFixed(2);
+            document.querySelector(".sum").innerHTML = getTotal(
+              document.querySelectorAll(".goods")
+            );
+          };
+        }
+      };
+      var radioAll = document.querySelectorAll(".radio");
+      //点击全选 checkbox 不能绑定 click 事件
+      //change 事件   当checkbox 的状态发生变化时
+      //也可以作为 input 输入框的失去焦点事件  跟 blur 一样
+      document.querySelector(".all").onchange = function() {
+        //功能修改 商品的单选 checkbox
+        //1.获取 全选本身的选中状态
+        //2.根据上面获取的修改所有的单选checkbox
+        var state = this.checked;
+        for (var i = 0; i < radioAll.length; i++) {
+          radioAll[i].checked = state;
+        }
+        //获取checkbox 的状态 直接赋值成 true 或false
+        document.querySelector(".sum").innerHTML = getTotal(
+          document.querySelectorAll(".goods")
+        );
+      };
+      //单选框的点击事件
+      for (var m = 0; m < radioAll.length; m++) {
+        radioAll[m].onclick = function() {
+          var stateRadio = this.checked;
+
+          if (stateRadio) {
+            //如果变为选中，则需要看其他单选框  1.全为选中状态   2 . 有未选中状态
+            var radioS = true;
+            for (var w = 0; w < radioAll.length; w++) {
+              if (radioAll[w].checked === false) {
+                radioS = false;
+                break;
+              }
+            }
+            if (radioS) {
+              document.querySelector(".all").checked = true;
+            } else {
+              document.querySelector(".all").checked = false;
+            }
+          } else {
+            //如果有不选中的，则全选框为false
+            document.querySelector(".all").checked = false;
+          }
+          document.querySelector(".sum").innerHTML = getTotal(
+            document.querySelectorAll(".goods")
+          );
+        };
+      }
+
+      // 选中的进行加和
+      function getTotal(allGoods) {
+        var sum = 0;
+        for (var p = 0; p < allGoods.length; p++) {
+          if (allGoods[p].querySelector(".radio").checked === true) {
+            sum += allGoods[p].querySelector(".total").innerHTML * 1;
+          }
+        }
+        return sum.toFixed(2);
+      }
+    </script>
+  </body>
+</html>
